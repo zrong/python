@@ -131,18 +131,23 @@ def get_hash(path, cut=0):
         sha1 = sha1[:7]
     return sha1
 
-def get_commit_times(path):
+def get_commit_times(path, all=True):
     """获取提交次数。
 
     :param str path: git 仓库文件夹路径。
+    :param bool all: 是否获取所有的commit。
     :returns: 包含所有分支的提交次数。
     :rtype: int
 
     """
-    code, output = call(path, "rev-list", '--all')
+    commit = 'HEAD'
+    if all:
+        commit = '--all'
+    code, output = call(path, "rev-list", '--count', commit)
     if code > 0:
-        return None
-    return output.count("\n")
+        return 0
+    else:
+        return int(output)
 
 def update_submodules(path, init=True, update=True):
     """更新子模块。
